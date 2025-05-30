@@ -1,0 +1,10 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  application:
+    name: codingCamp
+  datasource:
+    # url: ${DATABASE_URL_DEV}
+    url : jdbc:postgresql://localhost:15001/codingCamp
+    username: postgres
+    password: secret99
