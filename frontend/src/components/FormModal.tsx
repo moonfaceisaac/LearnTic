@@ -8,7 +8,7 @@ import {
   deleteStudent,
   deleteSubject,
   deleteTeacher,
-} from "@/lib/actions";
+} from "../lib/actions";
 
 const TeacherForm = lazy(() => import("./forms/TeacherForm"));
 const StudentForm = lazy(() => import("./forms/StudentForm"));

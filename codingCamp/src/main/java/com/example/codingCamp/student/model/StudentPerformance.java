@@ -1,0 +1,63 @@
+package com.example.codingCamp.student.model;
+
+import com.example.codingCamp.profile.model.Student;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.util.Date;
+import java.util.Map;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "student_performance")
+public class StudentPerformance {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "siswa_id", nullable = false)
+    private Student siswa;
+
+    @ElementCollection
+    @CollectionTable(name = "nilai_ujian_per_mapel", joinColumns = @JoinColumn(name = "student_performance_id"))
+    @MapKeyColumn(name = "mata_pelajaran")
+    @Column(name = "nilai_ujian")
+    private Map<String, Double> nilaiUjianPerMapel;
+
+    @ElementCollection
+    @CollectionTable(name = "nilai_tugas_per_mapel", joinColumns = @JoinColumn(name = "student_performance_id"))
+    @MapKeyColumn(name = "mata_pelajaran")
+    @Column(name = "nilai_tugas")
+    private Map<String, Double> nilaiTugasPerMapel;
+
+    @ElementCollection
+    @CollectionTable(name = "nilai_kuis_per_mapel", joinColumns = @JoinColumn(name = "student_performance_id"))
+    @MapKeyColumn(name = "mata_pelajaran")
+    @Column(name = "nilai_kuis")
+    private Map<String, Double> nilaiKuisPerMapel;
+
+    private Integer jumlahKehadiran;
+    private Double persentaseTugas;
+
+    private Double nilaiAkhirRataRata;
+
+    private Boolean submittedForPrediction = false;
+
+    private String statusPrediksi;
+
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", updatable = false)
+    private Date createdAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "deleted_at")
+    private Date deletedAt;
+}
