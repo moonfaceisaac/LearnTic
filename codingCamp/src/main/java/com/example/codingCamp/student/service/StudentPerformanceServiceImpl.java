@@ -45,7 +45,6 @@ public class StudentPerformanceServiceImpl implements StudentPerformanceService 
         data.setNilaiUjianPerMapel(request.getNilaiUjianPerMapel());
         data.setNilaiTugasPerMapel(request.getNilaiTugasPerMapel());
         data.setNilaiKuisPerMapel(request.getNilaiKuisPerMapel());
-        data.setKelas(request.getKelas());
         data.setJumlahKehadiran(request.getJumlahKehadiran());
         data.setPersentaseTugas(request.getPersentaseTugas());
         data.setNilaiAkhirRataRata(nilaiAkhir);
@@ -78,7 +77,6 @@ public class StudentPerformanceServiceImpl implements StudentPerformanceService 
         performance.setNilaiUjianPerMapel(request.getNilaiUjianPerMapel());
         performance.setNilaiTugasPerMapel(request.getNilaiTugasPerMapel());
         performance.setNilaiKuisPerMapel(request.getNilaiKuisPerMapel());
-        performance.setKelas(request.getKelas());
         performance.setJumlahKehadiran(request.getJumlahKehadiran());
         performance.setPersentaseTugas(request.getPersentaseTugas());
         performance.setNilaiAkhirRataRata(nilaiAkhir);
@@ -130,7 +128,6 @@ public class StudentPerformanceServiceImpl implements StudentPerformanceService 
                 performance.getNilaiTugasPerMapel(),
                 performance.getNilaiKuisPerMapel(),
                 performance.getNilaiAkhirRataRata(),
-                performance.getKelas(),
                 performance.getJumlahKehadiran(),
                 performance.getPersentaseTugas(),
                 performance.getStatusPrediksi(),

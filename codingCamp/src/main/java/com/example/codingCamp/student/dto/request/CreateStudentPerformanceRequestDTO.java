@@ -23,7 +23,6 @@ public class CreateStudentPerformanceRequestDTO {
 
     private Integer jumlahKehadiran;
     private Double persentaseTugas;
-    private String kelas;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date createdAt;

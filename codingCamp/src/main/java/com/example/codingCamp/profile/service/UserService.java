@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.example.codingCamp.profile.dto.request.AddUserRequestDTO;
 import com.example.codingCamp.profile.dto.request.UpdateUserRequestDTO;
+import com.example.codingCamp.profile.dto.response.StudentDetailDTO;
 import com.example.codingCamp.profile.dto.response.TeacherResponseDTO;
 import com.example.codingCamp.profile.dto.response.UserResponseDTO;
 import com.example.codingCamp.profile.model.UserModel;
@@ -20,6 +21,6 @@ public interface UserService {
     UserResponseDTO deleteUser(Long userId);
     List<UserResponseDTO> getAllUsers(Long id, String name, String email, String role);
     // // List<TeacherResponseDTO> getAllTeachers();
-    List<UserResponseDTO> getAllStudent(String search);
+    List<StudentDetailDTO> getAllStudent(String search);
     UserResponseDTO getStudentById(Long id);
 }

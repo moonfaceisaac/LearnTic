@@ -21,7 +21,6 @@ public class StudentPerformanceResponseDTO {
     private Map<String, Double> nilaiKuisPerMapel;
 
     private Double rataRataNilaiAkhir;
-    private String kelas;
 
     private Integer jumlahKehadiran;
     private Double persentaseTugas;

@@ -24,4 +24,10 @@ public class Student extends UserModel {
     // Relasi ke orang tua
     @OneToOne(mappedBy = "anak", fetch = FetchType.LAZY)
     private Parent orangTua;
+
+    private String kelas;
+    private String semester;
+
+
+
 }

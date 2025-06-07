@@ -12,7 +12,6 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudentPerformanceDTO {
-    private String kelas;
     private Map<String, Double> nilaiUjian;
     private Map<String, Double> nilaiTugas;
     private Map<String, Double> nilaiKuis;

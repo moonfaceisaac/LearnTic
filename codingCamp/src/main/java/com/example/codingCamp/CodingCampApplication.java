@@ -69,7 +69,8 @@ public class CodingCampApplication {
 				student.setPhone("081234567895");
 				student.setPassword(userService.hashPassword("rini!"));
 				student.setRole(roleRepository.findByRole("STUDENT").orElse(null));
-				// daftarNilai dan orangTua bisa null dulu saat faker
+				student.setKelas("XI");
+				student.setSemester("Semester 1");
 				userRepository.save(student);
 			}
 

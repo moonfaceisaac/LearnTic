@@ -219,7 +219,6 @@ public class UserServiceImpl implements UserService {
         } else if (user instanceof Student student) {
             List<StudentPerformanceDTO> daftarNilaiDTO = student.getDaftarNilai().stream()
                     .map(perf -> new StudentPerformanceDTO(
-                            perf.getKelas(),
                             perf.getNilaiUjianPerMapel(),
                             perf.getNilaiTugasPerMapel(),
                             perf.getNilaiKuisPerMapel(),
@@ -238,7 +237,9 @@ public class UserServiceImpl implements UserService {
                     student.getRole().getRole(),
                     student.getCreatedAt(),
                     student.getUpdatedAt(),
-                    daftarNilaiDTO);
+                    daftarNilaiDTO,
+                    student.getKelas(),
+                    student.getSemester());
         } else {
             // User umum (bukan parent/student)
             return new UserResponseDTO(
@@ -308,7 +309,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponseDTO> getAllStudent(String search) {
+    public List<StudentDetailDTO> getAllStudent(String search) {
         List<Student> students;
 
         if (search != null && !search.trim().isEmpty()) {
@@ -318,7 +319,7 @@ public class UserServiceImpl implements UserService {
         }
 
         return students.stream().map(student -> {
-            UserResponseDTO dto = new UserResponseDTO();
+            StudentDetailDTO dto = new StudentDetailDTO();
             dto.setId(student.getId());
             dto.setName(student.getName());
             dto.setUsername(student.getUsername());
@@ -327,9 +328,13 @@ public class UserServiceImpl implements UserService {
             dto.setCreatedAt(student.getCreatedAt());
             dto.setUpdatedAt(student.getUpdatedAt());
             dto.setRole("Student");
+            dto.setKelas(student.getKelas());
+            dto.setSemester(student.getSemester());
+            // daftarNilai boleh tidak diisi karena tidak dibutuhkan
             return dto;
         }).collect(Collectors.toList());
     }
+
 
     @Override
     public StudentDetailDTO getStudentById(Long id) {
@@ -338,7 +343,6 @@ public class UserServiceImpl implements UserService {
 
         List<StudentPerformanceDTO> daftarNilaiDTO = student.getDaftarNilai().stream()
                 .map(perf -> new StudentPerformanceDTO(
-                        perf.getKelas(),
                         perf.getNilaiUjianPerMapel(),
                         perf.getNilaiTugasPerMapel(),
                         perf.getNilaiKuisPerMapel(),
@@ -357,7 +361,9 @@ public class UserServiceImpl implements UserService {
                 "Student",
                 student.getCreatedAt(),
                 student.getUpdatedAt(),
-                daftarNilaiDTO);
+                daftarNilaiDTO,
+                student.getKelas(),
+                student.getSemester());
     }
 
 }

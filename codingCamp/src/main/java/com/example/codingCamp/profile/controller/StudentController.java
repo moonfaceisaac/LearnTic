@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.codingCamp.dto.BaseResponseDTO;
+import com.example.codingCamp.profile.dto.response.StudentDetailDTO;
 import com.example.codingCamp.profile.dto.response.UserResponseDTO;
 import com.example.codingCamp.profile.service.UserService;
 
@@ -26,10 +27,10 @@ public class StudentController {
     private UserService userService;
 
     @GetMapping("")
-    public ResponseEntity<?> getAllStudent(@RequestParam(value = "search", required = false) String search) {
-        var baseResponseDTO = new BaseResponseDTO<List<UserResponseDTO>>();
+    public ResponseEntity<BaseResponseDTO<List<StudentDetailDTO>>> getAllStudent(@RequestParam(value = "search", required = false) String search) {
+        BaseResponseDTO<List<StudentDetailDTO>> baseResponseDTO = new BaseResponseDTO<>();
         try {
-            List<UserResponseDTO> students = userService.getAllStudent(search);
+            List<StudentDetailDTO> students = userService.getAllStudent(search);
 
             baseResponseDTO.setStatus(HttpStatus.OK.value());
             baseResponseDTO.setMessage("Berhasil mengambil data student");
@@ -45,6 +46,7 @@ public class StudentController {
             return new ResponseEntity<>(baseResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getStudentById(@PathVariable Long id) {
