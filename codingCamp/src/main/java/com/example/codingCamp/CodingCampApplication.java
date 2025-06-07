@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 import com.example.codingCamp.profile.model.Student;
 import com.example.codingCamp.profile.model.Teacher;
+import com.example.codingCamp.profile.model.Parent;
 import com.example.codingCamp.profile.model.Role;
 import com.example.codingCamp.profile.model.UserModel;
 import com.example.codingCamp.profile.repository.RoleRepository;
@@ -108,7 +109,7 @@ public class CodingCampApplication {
 
 
 				Student anak = (Student) userRepository.findByUsername("student_rini");
-				parent.setChildName(anak);
+				parent.setAnak(anak);
 
 				userRepository.save(parent);
 			}

@@ -13,12 +13,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.codingCamp.auth.dto.request.LoginRequest;
+import com.example.codingCamp.auth.dto.response.LoginResponse;
 import com.example.codingCamp.dto.BaseResponseDTO;
-import com.example.codingCamp.dto.request.LoginRequest;
-import com.example.codingCamp.dto.response.LoginResponse;
-import com.example.codingCamp.model.User;
+import com.example.codingCamp.profile.model.UserModel;
+import com.example.codingCamp.profile.service.UserService;
 import com.example.codingCamp.security.jwt.JwtUtils;
-import com.example.codingCamp.service.UserService;
 
 import java.util.Date;
 import java.util.Objects;
@@ -44,6 +44,7 @@ public class AuthController {
     public ResponseEntity<?> userLogin(@RequestBody LoginRequest requestDTO) {
         var baseResponseDTO = new BaseResponseDTO<LoginResponse>();
         try {
+            // Ubah getEmailOrUsername ke getUsername sesuai LoginRequest
             authenticate(requestDTO.getEmailOrUsername(), requestDTO.getPassword());
             baseResponseDTO.setStatus(HttpStatus.OK.value());
             baseResponseDTO.setMessage("Login Berhasil");
@@ -54,21 +55,25 @@ public class AuthController {
             baseResponseDTO.setTimestamp(new Date());
             return new ResponseEntity<>(baseResponseDTO, HttpStatus.FORBIDDEN);
         }
-        User user = userService.findUserByEmailOrUsername(requestDTO.getEmailOrUsername());
+
+        UserModel user = userService.findUserByEmailOrUsername(requestDTO.getEmailOrUsername());
+
         final String token = jwtUtils.generateJwtToken(
                                 user.getUsername(), 
                                 user.getId().toString(),
                                 user.getRole().getRole()
                              );
-        baseResponseDTO.setData(new LoginResponse(token));
+
+        // Buat LoginResponse dengan semua field agar sesuai constructor
+        baseResponseDTO.setData(new LoginResponse(token, user.getRole().getRole(), user.getId()));
         return new ResponseEntity<>(baseResponseDTO, HttpStatus.OK);
     }
 
-    private void authenticate(String emailOrUsername, String password) throws Exception {
-        Objects.requireNonNull(emailOrUsername);
+    private void authenticate(String username, String password) throws Exception {
+        Objects.requireNonNull(username);
         Objects.requireNonNull(password);
 
-        User user = userService.findUserByEmailOrUsername(emailOrUsername);
+        UserModel user = userService.findUserByEmailOrUsername(username);
 
         if (user == null) {
             throw new Exception("USER_NOT_FOUND");
@@ -79,13 +84,12 @@ public class AuthController {
         authenticationProvider.setPasswordEncoder(encoder);
         AuthenticationManager authenticationManager = new ProviderManager(authenticationProvider);
 
-        try{
+        try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), password));
-        } catch (DisabledException e){
+        } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new Exception("INVALID_CREDENTIALS", e);
         }
     }
 }
-

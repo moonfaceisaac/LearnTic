@@ -3,6 +3,7 @@ package com.example.codingCamp.profile.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,9 +18,13 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             "LOWER(f.email) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(f.phone) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
             "AND f.deletedAt IS NULL")
-    List<Freelancer> searchByNameEmailOrPhone(@Param("keyword") String keyword);
+    List<Student> searchByNameEmailOrPhone(@Param("keyword") String keyword);
 
-    List<Freelancer> findByDeletedAtIsNull();
+    List<Student> findByDeletedAtIsNull();
 
-    Optional<Freelancer> findByName(String name);
+    Optional<Student> findByName(String name);
+
+    @EntityGraph(attributePaths = "daftarNilai")
+    Optional<Student> findWithDaftarNilaiById(Long id);
+
 }

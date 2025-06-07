@@ -15,7 +15,7 @@ import com.example.codingCamp.profile.service.ProfileService;
 import com.example.codingCamp.profile.service.UserService;
 
 import com.example.codingCamp.auth.service.AuthService;
-import com.example.codingCamp.dto.response.BaseResponseDTO;
+import com.example.codingCamp.dto.BaseResponseDTO;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,5 +1,6 @@
 package com.example.codingCamp.profile.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -14,32 +15,32 @@ import org.springframework.stereotype.Service;
 import com.example.codingCamp.profile.dto.request.AddUserRequestDTO;
 import com.example.codingCamp.profile.dto.request.UpdateUserRequestDTO;
 import com.example.codingCamp.profile.dto.response.StudentDetailDTO;
-import com.example.codingCamp.profile.dto.response.TeacherDetailDTO;
+import com.example.codingCamp.profile.dto.response.ParentDetailDTO;
 import com.example.codingCamp.profile.dto.response.TeacherResponseDTO;
 import com.example.codingCamp.profile.dto.response.UserResponseDTO;
 import com.example.codingCamp.profile.model.Student;
+import com.example.codingCamp.profile.model.Parent;
 import com.example.codingCamp.profile.model.Role;
 import com.example.codingCamp.profile.model.UserModel;
 import com.example.codingCamp.profile.repository.StudentRepository;
 import com.example.codingCamp.profile.repository.RoleRepository;
 import com.example.codingCamp.profile.repository.UserRepository;
-
+import com.example.codingCamp.student.dto.response.StudentPerformanceDTO;
+import com.example.codingCamp.student.model.StudentPerformance;
 
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
 
-
     @Autowired
     RoleRepository roleRepository;
 
     @Autowired
-    StudentRepository StudentRepository;
+    StudentRepository studentRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
 
     @Override
     public UserModel findUserByUsername(String username) {
@@ -101,13 +102,11 @@ public class UserServiceImpl implements UserService {
 
         // Jika role adalah Teacher, buat instance Teacher
         UserModel user;
-        if ("Teacher".equalsIgnoreCase(role.getRole())) {
-            user = new Teacher();
-        } else if ("Student".equalsIgnoreCase(role.getRole())) {
-            user = new Student(); // **Gunakan Student**
+        if ("Student".equalsIgnoreCase(role.getRole())) {
+            user = new Student();
         } else if ("Parent".equalsIgnoreCase(role.getRole())) {
             user = new Parent(); // **Gunakan Student**
-        }else {
+        } else {
             user = new UserModel();
         }
 
@@ -192,7 +191,6 @@ public class UserServiceImpl implements UserService {
                 updatedUser.getUpdatedAt());
     }
 
-
     @Override
     public UserResponseDTO getUserById(Long id) {
         Optional<UserModel> userOptional = userRepository.findById(id);
@@ -203,41 +201,46 @@ public class UserServiceImpl implements UserService {
 
         UserModel user = userOptional.get();
 
-        // Membuat DTO sesuai dengan tipe user
-        if (user instanceof Teacher) {
-            Teacher teacher = (Teacher) user;
+        if (user instanceof Parent) {
+            Parent parent = (Parent) user;
+            String namaAnak = parent.getAnak() != null ? parent.getAnak().getName() : null;
 
-            // Buat TeacherDetailDTO yang diperluas
-            TeacherDetailDTO teacherDetail = new TeacherDetailDTO(
-                    user.getId(),
-                    user.getName(),
-                    user.getUsername(),
-                    user.getEmail(),
-                    user.getPhone(),
-                    user.getRole().getRole(),
-                    user.getCreatedAt(),
-                    user.getUpdatedAt());
+            return new ParentDetailDTO(
+                    parent.getId(),
+                    parent.getName(),
+                    parent.getUsername(),
+                    parent.getEmail(),
+                    parent.getPhone(),
+                    parent.getRole().getRole(),
+                    parent.getCreatedAt(),
+                    parent.getUpdatedAt(),
+                    namaAnak);
 
-        
-            return teacherDetail;
-        } else if (user instanceof Student) {
-            Student Student = (Student) user;
+        } else if (user instanceof Student student) {
+            List<StudentPerformanceDTO> daftarNilaiDTO = student.getDaftarNilai().stream()
+                    .map(perf -> new StudentPerformanceDTO(
+                            perf.getKelas(),
+                            perf.getNilaiUjianPerMapel(),
+                            perf.getNilaiTugasPerMapel(),
+                            perf.getNilaiKuisPerMapel(),
+                            perf.getJumlahKehadiran(),
+                            perf.getPersentaseTugas(),
+                            perf.getNilaiAkhirRataRata(),
+                            perf.getStatusPrediksi()))
+                    .toList();
 
-            // Buat StudentResponseDTO yang diperluas
-            StudentDetailDTO StudentDetail = new StudentDetailDTO(
-                    user.getId(),
-                    user.getName(),
-                    user.getUsername(),
-                    user.getEmail(),
-                    user.getPhone(),
-                    user.getRole().getRole(),
-                    user.getCreatedAt(),
-                    user.getUpdatedAt());
-
-
-            return StudentDetail;
+            return new StudentDetailDTO(
+                    student.getId(),
+                    student.getName(),
+                    student.getUsername(),
+                    student.getEmail(),
+                    student.getPhone(),
+                    student.getRole().getRole(),
+                    student.getCreatedAt(),
+                    student.getUpdatedAt(),
+                    daftarNilaiDTO);
         } else {
-            // Jika user biasa
+            // User umum (bukan parent/student)
             return new UserResponseDTO(
                     user.getId(),
                     user.getName(),
@@ -250,10 +253,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
-
-
-
     @Override
     public UserResponseDTO deleteUser(Long userId) {
         // Cek apakah user ada
@@ -264,7 +263,6 @@ public class UserServiceImpl implements UserService {
         if (user.getDeletedAt() != null) {
             throw new RuntimeException("User telah dihapus sebelumnya");
         }
-
 
         // Soft delete dengan mengupdate kolom deletedAt
         user.setDeletedAt(new Date());
@@ -309,46 +307,57 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
-   
-
     @Override
     public List<UserResponseDTO> getAllStudent(String search) {
-        List<Student> Students;
+        List<Student> students;
 
         if (search != null && !search.trim().isEmpty()) {
-            Students = StudentRepository.searchByNameEmailOrPhone(search.trim());
+            students = studentRepository.searchByNameEmailOrPhone(search.trim());
         } else {
-            Students = StudentRepository.findByDeletedAtIsNull();
+            students = studentRepository.findByDeletedAtIsNull();
         }
 
-        return Students.stream().map(Student -> {
+        return students.stream().map(student -> {
             UserResponseDTO dto = new UserResponseDTO();
-            dto.setId(Student.getId());
-            dto.setName(Student.getName());
-            dto.setUsername(Student.getUsername());
-            dto.setEmail(Student.getEmail());
-            dto.setPhone(Student.getPhone());
-            dto.setCreatedAt(Student.getCreatedAt());
-            dto.setUpdatedAt(Student.getUpdatedAt());
+            dto.setId(student.getId());
+            dto.setName(student.getName());
+            dto.setUsername(student.getUsername());
+            dto.setEmail(student.getEmail());
+            dto.setPhone(student.getPhone());
+            dto.setCreatedAt(student.getCreatedAt());
+            dto.setUpdatedAt(student.getUpdatedAt());
             dto.setRole("Student");
             return dto;
         }).collect(Collectors.toList());
     }
 
     @Override
-    public UserResponseDTO getStudentById(Long id) {
-        Student Student = StudentRepository.findById(id)
+    public StudentDetailDTO getStudentById(Long id) {
+        Student student = studentRepository.findWithDaftarNilaiById(id)
                 .orElseThrow(() -> new NoSuchElementException("Student tidak ditemukan"));
 
-        UserResponseDTO dto = new UserResponseDTO();
-        dto.setId(Student.getId());
-        dto.setName(Student.getName());
-        dto.setUsername(Student.getUsername());
-        dto.setEmail(Student.getEmail());
-        dto.setPhone(Student.getPhone());
-        dto.setCreatedAt(Student.getCreatedAt());
-        dto.setUpdatedAt(Student.getUpdatedAt());
-        dto.setRole("Student");
-        return dto;
+        List<StudentPerformanceDTO> daftarNilaiDTO = student.getDaftarNilai().stream()
+                .map(perf -> new StudentPerformanceDTO(
+                        perf.getKelas(),
+                        perf.getNilaiUjianPerMapel(),
+                        perf.getNilaiTugasPerMapel(),
+                        perf.getNilaiKuisPerMapel(),
+                        perf.getJumlahKehadiran(),
+                        perf.getPersentaseTugas(),
+                        perf.getNilaiAkhirRataRata(),
+                        perf.getStatusPrediksi()))
+                .collect(Collectors.toList());
+
+        return new StudentDetailDTO(
+                student.getId(),
+                student.getName(),
+                student.getUsername(),
+                student.getEmail(),
+                student.getPhone(),
+                "Student",
+                student.getCreatedAt(),
+                student.getUpdatedAt(),
+                daftarNilaiDTO);
     }
+
 }

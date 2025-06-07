@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class TeacherDetailDTO extends UserResponseDTO {
+public class ParentDetailDTO extends UserResponseDTO {
+    private String namaAnak;
 
-    
-    public TeacherDetailDTO(Long id, String name, String username, String email, 
-                                   String phone, String role, Date createdAt, Date updatedAt) {
+    public ParentDetailDTO(Long id, String name, String username, String email, 
+                           String phone, String role, Date createdAt, Date updatedAt, String namaAnak) {
         super(id, name, username, email, phone, role, createdAt, updatedAt);
-      
+        this.namaAnak = namaAnak;
     }
 }

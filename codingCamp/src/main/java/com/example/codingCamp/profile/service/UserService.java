@@ -19,7 +19,7 @@ public interface UserService {
     UserResponseDTO getUserById(Long id);
     UserResponseDTO deleteUser(Long userId);
     List<UserResponseDTO> getAllUsers(Long id, String name, String email, String role);
-    List<TeacherResponseDTO> getAllTeachers();
-    List<UserResponseDTO> getAllStudents(String search);
+    // // List<TeacherResponseDTO> getAllTeachers();
+    List<UserResponseDTO> getAllStudent(String search);
     UserResponseDTO getStudentById(Long id);
 }

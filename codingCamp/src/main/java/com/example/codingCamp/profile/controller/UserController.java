@@ -1,4 +1,4 @@
-package com.example.codingCampprofile.controller;
+package com.example.codingCamp.profile.controller;
 
 import java.util.Date;
 import java.util.List;
@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.example.codingCamp.dto.BaseResponseDTO;
 
-import com.example.codingCamp.dto.response.BaseResponseDTO;
 import com.example.codingCamp.profile.dto.request.AddUserRequestDTO;
 import com.example.codingCamp.profile.dto.request.UpdateUserRequestDTO;
 import com.example.codingCamp.profile.dto.response.UserResponseDTO;
@@ -99,18 +99,16 @@ public class UserController {
         }
     }
 
-
-
     @GetMapping("")
     public ResponseEntity<?> detailUser(@RequestParam("id") Long id) {
-        var baseResponseDTO = new BaseResponseDTO<>();
+        BaseResponseDTO<UserResponseDTO> baseResponseDTO = new BaseResponseDTO<>();
 
         UserResponseDTO user = userService.getUserById(id);
         if (user == null) {
             baseResponseDTO.setStatus(HttpStatus.NOT_FOUND.value());
             baseResponseDTO.setMessage("Data user tidak ditemukan");
             baseResponseDTO.setTimestamp(new Date());
-            return new ResponseEntity<>(baseResponseDTO, HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(baseResponseDTO);
         }
 
         baseResponseDTO.setStatus(HttpStatus.OK.value());
@@ -118,7 +116,7 @@ public class UserController {
         baseResponseDTO.setMessage(String.format("User dengan ID %s berhasil ditemukan", user.getId()));
         baseResponseDTO.setTimestamp(new Date());
 
-        return new ResponseEntity<>(baseResponseDTO, HttpStatus.OK);
+        return ResponseEntity.ok(baseResponseDTO);
     }
 
     @DeleteMapping("/delete")
@@ -167,6 +165,5 @@ public class UserController {
             return new ResponseEntity<>(baseResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
 }

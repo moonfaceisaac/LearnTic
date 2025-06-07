@@ -21,9 +21,9 @@ public class StudentPerformance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "siswa_id", nullable = false)
-    private Student siswa;
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private Student student; 
 
     @ElementCollection
     @CollectionTable(name = "nilai_ujian_per_mapel", joinColumns = @JoinColumn(name = "student_performance_id"))
@@ -47,6 +47,7 @@ public class StudentPerformance {
     private Double persentaseTugas;
 
     private Double nilaiAkhirRataRata;
+    private String kelas;
 
     private Boolean submittedForPrediction = false;
 
@@ -60,4 +61,8 @@ public class StudentPerformance {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "deleted_at")
     private Date deletedAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at")
+    private Date updatedAt;
 }

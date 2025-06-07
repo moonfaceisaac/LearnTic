@@ -16,10 +16,10 @@ import io.jsonwebtoken.security.SignatureException;
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
  
-    @Value("${dewanspace.app.jwtSecret}")
+    @Value("${codingCamp.app.jwtSecret}")
     private String jwtSecret;
 
-    @Value("${dewanspace.app.jwtExpirationMs}")
+    @Value("${codingCamp.app.jwtExpirationMs}")
     private int jwtExpirationMs;
  
     public String getUserNameFromJwtToken(String token){

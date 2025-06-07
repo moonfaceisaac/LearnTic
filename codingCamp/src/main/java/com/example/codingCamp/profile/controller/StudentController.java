@@ -3,7 +3,7 @@ package com.example.codingCamp.profile.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.codingCamp.dto.response.BaseResponseDTO;
+import com.example.codingCamp.dto.BaseResponseDTO;
 import com.example.codingCamp.profile.dto.response.UserResponseDTO;
 import com.example.codingCamp.profile.service.UserService;
 
@@ -29,12 +29,12 @@ public class StudentController {
     public ResponseEntity<?> getAllStudent(@RequestParam(value = "search", required = false) String search) {
         var baseResponseDTO = new BaseResponseDTO<List<UserResponseDTO>>();
         try {
-            List<UserResponseDTO> students = userService.getAllStudents(search);
+            List<UserResponseDTO> students = userService.getAllStudent(search);
 
             baseResponseDTO.setStatus(HttpStatus.OK.value());
             baseResponseDTO.setMessage("Berhasil mengambil data student");
             baseResponseDTO.setTimestamp(new Date());
-            baseResponseDTO.setData(freelancers);
+            baseResponseDTO.setData(students);
 
             return new ResponseEntity<>(baseResponseDTO, HttpStatus.OK);
         } catch (Exception e) {
@@ -55,7 +55,7 @@ public class StudentController {
             baseResponseDTO.setStatus(HttpStatus.OK.value());
             baseResponseDTO.setMessage("Berhasil mengambil detail student");
             baseResponseDTO.setTimestamp(new Date());
-            baseResponseDTO.setData(freelancer);
+            baseResponseDTO.setData(student);
 
             return new ResponseEntity<>(baseResponseDTO, HttpStatus.OK);
         } catch (NoSuchElementException e) {
